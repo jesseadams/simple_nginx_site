@@ -25,6 +25,8 @@ chef exec kitchen test
 Use packer to generate a new AMI.
 
 ```shell
+berks update
+berks vendor vendor
 cd packer
 packer build ami.json
 ```
