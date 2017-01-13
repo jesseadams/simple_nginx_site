@@ -1,0 +1,25 @@
+---
+driver:
+  name: docker
+  use_sudo: false
+  privileged: true
+  provision_command: sudo apt-get install net-tools
+
+platforms:
+  - name: debian-8.6
+
+provisioner:
+  name: chef_zero
+  require_chef_omnibus: 12.17.44
+
+suites:
+  - name: static_webpage
+    run_list:
+      - recipe[simple_nginx_site::static_webpage]
+    attributes:
+
+transport:
+  name: sftp
+
+verifier:
+  name: inspec

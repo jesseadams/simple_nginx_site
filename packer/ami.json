@@ -1,0 +1,36 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "source_ami": "ami-2a34e94a",
+    "name": "automation_for_the_people"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "region": "us-west-2",
+    "source_ami": "{{user `source_ami`}}",
+    "instance_type": "t2.micro",
+    "security_group_id": "",
+    "ami_name": "{{user `name`}}_{{timestamp}}",
+    "ssh_username": "admin"
+  }],
+  "provisioners" : [
+    { 
+      "type": "shell",
+      "inline": [
+        "sudo apt-get update",
+        "sudo apt-get -y install curl",
+        "curl -L https://omnitruck.chef.io/install.sh | sudo bash"
+      ]
+    },
+    { 
+      "type": "chef-solo",
+      "cookbook_paths": ["../", "../vendor"],
+      "run_list": [
+        "simple_nginx_site::static_webpage"
+      ]
+    }
+  ]
+}
