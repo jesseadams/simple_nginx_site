@@ -6,10 +6,7 @@ driver:
   provision_command: sudo apt-get install net-tools
 
 platforms:
-  #- name: debian-8.6
-  - name: macosx-10.10
-    driver:
-      name: localhost
+  - name: debian-8.6
 
 provisioner:
   name: chef_zero
