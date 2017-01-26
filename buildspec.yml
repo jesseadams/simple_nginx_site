@@ -29,6 +29,7 @@ phases:
       - cd packer; packer build ami.json
       - cd terraform; terraform apply -var "ami=`cat ../packer/ami.txt`"
 artifacts:
+  type: zip
   files:
     - packer/ami.txt
     - terraform/*.tfstate
