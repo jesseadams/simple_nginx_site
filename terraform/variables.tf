@@ -8,11 +8,6 @@ variable "ami" {
   default = "ami-2a34e94a"
 }
 
-variable "availability_zones" {
-  default     = "us-west-2a,us-west-2b,us-west-2c"
-  description = "List of availability zones, use AWS CLI to find your "
-}
-
 variable "key_name" {
   description = "Name of AWS key pair"
   default = "jesse"

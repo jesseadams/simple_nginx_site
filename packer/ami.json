@@ -27,7 +27,7 @@
     },
     { 
       "type": "chef-solo",
-      "cookbook_paths": ["../", "../vendor"],
+      "cookbook_paths": ["../vendor"],
       "run_list": [
         "simple_nginx_site::static_webpage"
       ]

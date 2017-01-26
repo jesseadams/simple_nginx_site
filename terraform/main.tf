@@ -4,8 +4,7 @@ provider "aws" {
 
 resource "aws_elb" "web-elb" {
   name = "simple-web-elb"
-
-  availability_zones = ["${split(",", var.availability_zones)}"]
+  subnets  = ["${aws_subnet.us-west-2a-public.id}", "${aws_subnet.us-west-2b-public.id}"]
 
   listener {
     instance_port     = 80
@@ -24,7 +23,7 @@ resource "aws_elb" "web-elb" {
 }
 
 resource "aws_autoscaling_group" "web-asg" {
-  availability_zones   = ["${split(",", var.availability_zones)}"]
+  vpc_zone_identifier  = ["${aws_subnet.us-west-2a-public.id}", "${aws_subnet.us-west-2b-public.id}"]
   name                 = "simple-web-asg-${aws_launch_configuration.web-lc.name}"
   max_size             = "${var.asg_max}"
   min_size             = "${var.asg_min}"
@@ -58,6 +57,7 @@ resource "aws_launch_configuration" "web-lc" {
 resource "aws_security_group" "simple" {
   name        = "simple_static_webpage"
   description = "Allow port 80 inbound"
+  vpc_id      = "${aws_vpc.default.id}"
 
   ingress {
     from_port   = 80
@@ -84,4 +84,47 @@ resource "aws_route53_record" "www" {
     zone_id = "${aws_elb.web-elb.zone_id}"
     evaluate_target_health = true
   }
+}
+
+resource "aws_vpc" "default" {
+    cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_internet_gateway" "default" {
+    vpc_id = "${aws_vpc.default.id}"
+}
+
+resource "aws_subnet" "us-west-2a-public" {
+    vpc_id = "${aws_vpc.default.id}"
+    map_public_ip_on_launch = true
+
+    cidr_block = "10.0.0.0/24"
+    availability_zone = "us-west-2a"
+}
+
+resource "aws_subnet" "us-west-2b-public" {
+    vpc_id = "${aws_vpc.default.id}"
+    map_public_ip_on_launch = true
+
+    cidr_block = "10.0.2.0/24"
+    availability_zone = "us-west-2b"
+}
+
+resource "aws_route_table" "us-west-2-public" {
+    vpc_id = "${aws_vpc.default.id}"
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.default.id}"
+    }
+}
+
+resource "aws_route_table_association" "us-west-2a-public" {
+    subnet_id = "${aws_subnet.us-west-2a-public.id}"
+    route_table_id = "${aws_route_table.us-west-2-public.id}"
+}
+
+resource "aws_route_table_association" "us-west-2b-public" {
+    subnet_id = "${aws_subnet.us-west-2b-public.id}"
+    route_table_id = "${aws_route_table.us-west-2-public.id}"
 }

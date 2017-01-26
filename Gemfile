@@ -8,3 +8,5 @@ gem 'kitchen-sync'
 gem 'foodcritic'
 gem 'cookstyle'
 gem 'chefspec'
+gem 'rake-foodcritic'
+
