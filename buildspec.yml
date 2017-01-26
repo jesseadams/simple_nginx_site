@@ -28,6 +28,9 @@ phases:
     commands:
       - cd packer; packer build ami.json
       - cd terraform; terraform apply -var "ami=`cat ../packer/ami.txt`"
+  post_build:
+    commands:
+      - cat .kitchen/logs/kitchen.log
 artifacts:
   type: zip
   files:
