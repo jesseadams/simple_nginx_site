@@ -4,11 +4,11 @@ phases:
   install:
     commands:
       - sudo apt-get update
-      - sudo apt-get install -y curl software-properties-common
+      - sudo apt-get install -y curl software-properties-common apt-transport-https wget gdebi ca-certificates
       - curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add -
       - sudo add-apt-repository "deb https://apt.dockerproject.org/repo/ ubuntu-$(lsb_release -cs) main"
       - sudo apt-get update
-      - sudo apt-get install -y wget gdebi apt-transport-https ca-certificates docker-engine
+      - sudo apt-get install -y docker-engine
       - wget https://packages.chef.io/stable/ubuntu/12.04/chefdk_1.0.3-1_amd64.deb
       - gdebi -n chefdk_1.0.3-1_amd64.deb
       - wget https://releases.hashicorp.com/packer/0.12.2/packer_0.12.2_linux_amd64.zip
