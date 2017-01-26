@@ -23,7 +23,6 @@ phases:
       - chef exec foodcritic . --exclude test
       - chef exec cookstyle
       - chef exec rspec
-      - chef exec kitchen test
   build:
     commands:
       - echo Nothing
