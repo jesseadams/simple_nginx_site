@@ -1,0 +1,21 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - sudo apt-get update -y
+      - sudo apt-get install -y wget
+      - sudo apt-get install -y gdebi
+      - wget https://packages.chef.io/stable/ubuntu/12.04/chefdk_1.0.3-1_amd64.deb
+      - gdebi -n chefdk_1.0.3-1_amd64.deb
+  build:
+    commands:
+      - chef exec foodcritic .
+  post_build:
+    commands:
+      - echo No post build yet
+artifacts:
+  type: zip
+  files:
+    - files/*
+    - recipes/*
