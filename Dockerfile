@@ -44,6 +44,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 RUN mkdir /tmp/simple_nginx_site
 COPY . /tmp/simple_nginx_site
 RUN berks vendor -b /tmp/simple_nginx_site/Berksfile $COOKBOOK_PATH
+RUN cd /tmp/simple_nginx_site; chef exec foodcritic . && chef exec cookstyle && chef exec rspec
 RUN chef-client -r "recipe[simple_nginx_site::static_webpage]" && inspec exec /tmp/simple_nginx_site/test/recipes/static_webpage/
 
 CMD ["nginx", "-g", "daemon off;"]
