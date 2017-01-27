@@ -25,13 +25,14 @@ phases:
       - chef exec rspec
   build:
     commands:
-      - echo Nothing
+      - sudo chef-client --local-mode -c solo.rb -r 'recipe[simple_nginx_site::static_webpage]'
+      - chef exec inspec exec test/recipes/static_webpage/
 #      - chef exec kitchen test
 #      - cd packer; packer build ami.json
 #      - cd terraform; terraform apply -var "ami=`cat ../packer/ami.txt`"
-  post_build:
-    commands:
-      - cat .kitchen/logs/kitchen.log
+#  post_build:
+#    commands:
+#      - cat .kitchen/logs/kitchen.log
 # artifacts:
 #   type: zip
 #   files:
