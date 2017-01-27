@@ -1,41 +1,13 @@
 version: 0.1
 
 phases:
-  install:
-    commands:
-      - sudo apt-get update
-      - sudo apt-get install -y curl software-properties-common apt-transport-https wget gdebi ca-certificates
-      #- curl -fsSL https://yum.dockerproject.org/gpg | sudo apt-key add -
-      #- sudo add-apt-repository "deb https://apt.dockerproject.org/repo/ ubuntu-$(lsb_release -cs) main"
-      - sudo apt-get update
-      #- sudo apt-get install -y docker-engine
-      - wget https://packages.chef.io/stable/ubuntu/12.04/chefdk_1.0.3-1_amd64.deb
-      - gdebi -n chefdk_1.0.3-1_amd64.deb
-      #- wget https://releases.hashicorp.com/packer/0.12.2/packer_0.12.2_linux_amd64.zip
-      #- sudo unzip packer_0.12.2_linux_amd64.zip -d /usr/local/bin
-      #- wget https://releases.hashicorp.com/terraform/0.8.5/terraform_0.8.5_linux_amd64.zip
-      #- sudo unzip terraform_0.8.5_linux_amd64.zip -d /usr/local/bin
-      - bundle install
-      - berks install
-      - berks vendor vendor
   pre_build:
     commands:
-      - chef exec foodcritic . --exclude test
-      - chef exec cookstyle
-      - chef exec rspec
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION)
   build:
     commands:
-      - sudo chef-client --local-mode -c solo.rb -r 'recipe[simple_nginx_site::static_webpage]'
-      - chef exec inspec exec test/recipes/static_webpage/
-#      - chef exec kitchen test
-#      - cd packer; packer build ami.json
-#      - cd terraform; terraform apply -var "ami=`cat ../packer/ami.txt`"
-#  post_build:
-#    commands:
-#      - cat .kitchen/logs/kitchen.log
-# artifacts:
-#   type: zip
-#   files:
-#     - packer/ami.txt
-#     - terraform/*.tfstate
-#     - .kitchen/*
+      - docker build -t $IMAGE_REPO_NAME .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+  post_build:
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
